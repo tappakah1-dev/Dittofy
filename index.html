@@ -88,11 +88,34 @@
                 <a href="#generator" class="hover:text-white transition-colors">Dittofier</a>
                 <a href="#tokenomics" class="hover:text-white transition-colors">Stats</a>
             </div>
-            <a href="https://axiom.trade/@dumacuk" target="_blank" class="cyber-gradient text-white px-8 py-2.5 rounded-full font-bold shadow-lg btn-cyber">
-                Buy $DITTOFY
-            </a>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSettings()" class="p-2 text-zinc-500 hover:text-white transition-colors" title="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <a href="https://axiom.trade/@dumacuk" target="_blank" class="cyber-gradient text-white px-8 py-2.5 rounded-full font-bold shadow-lg btn-cyber">
+                    Buy $DITTOFY
+                </a>
+            </div>
         </div>
     </nav>
+
+    <!-- Settings Overlay -->
+    <div id="settings-overlay" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-6 backdrop-blur-sm">
+        <div class="glass p-8 rounded-3xl max-w-md w-full border border-white/10 relative">
+            <button onclick="toggleSettings()" class="absolute top-4 right-4 text-zinc-500 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+            </button>
+            <h3 class="font-brand text-2xl text-white mb-6 uppercase tracking-tight">AI Settings</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Gemini API Key</label>
+                    <input type="password" id="api-key-input" placeholder="Enter your API key" class="w-full bg-zinc-900 border border-white/10 rounded-xl py-3 px-4 text-white focus:border-purple-500 outline-none transition-all">
+                    <p class="text-[10px] text-zinc-500 mt-2">Required for Vercel deployments. Key is stored only in your browser's local storage.</p>
+                </div>
+                <button onclick="saveSettings()" class="w-full cyber-gradient py-3 rounded-xl font-bold hover:scale-[1.02] transition">SAVE SETTINGS</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="pt-40 pb-20 px-6 relative">
@@ -238,8 +261,32 @@
     </div>
 
     <script>
-        // API Key initialized as per instructions. Execution environment handles the key.
-        const apiKey = "";
+        // API Key initialization
+        let apiKey = localStorage.getItem('GEMINI_API_KEY') || "";
+        
+        // Populate input if key exists
+        document.getElementById('api-key-input').value = apiKey;
+
+        function toggleSettings() {
+            const overlay = document.getElementById('settings-overlay');
+            overlay.classList.toggle('hidden');
+            overlay.classList.toggle('flex');
+        }
+
+        function saveSettings() {
+            const val = document.getElementById('api-key-input').value.trim();
+            apiKey = val;
+            localStorage.setItem('GEMINI_API_KEY', val);
+            toggleSettings();
+            showToast("Settings Saved!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('span').innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }
 
         function copyCA() {
             const ca = document.getElementById('ca-text').innerText;
@@ -249,9 +296,7 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            const toast = document.getElementById('toast');
-            toast.style.opacity = '1';
-            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+            showToast("Copied to Clipboard!");
         }
 
         const placeholder = document.getElementById('placeholder');
@@ -259,12 +304,12 @@
         const resultContainer = document.getElementById('result-container');
         const resultImage = document.getElementById('result-image');
 
-        // Multi-proxy fallback image fetcher
+        // Multi-proxy fallback image fetcher with explicit error catching for Certs
         async function getBase64FromUrl(url) {
-            // List of proxies to try in sequence if one is blocked/invalid cert
             const proxies = [
                 `https://corsproxy.io/?${encodeURIComponent(url)}`,
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://images.weserv.nl/?url=${encodeURIComponent(url)}`
             ];
             
             for (const proxiedUrl of proxies) {
@@ -280,20 +325,24 @@
                         reader.readAsDataURL(blob);
                     });
                 } catch (e) {
-                    console.warn(`Proxy ${proxiedUrl} failed, trying next...`, e);
+                    console.warn(`Fetch via ${proxiedUrl} failed: ${e.message}`);
                 }
             }
-
-            // If all proxies fail, throw error
-            throw new Error("Security policy blocked all DNA fetch attempts. Please use manual upload!");
+            throw new Error("DNA scan blocked by network security. Please use Manual Upload!");
         }
 
-        // Exponential Backoff Fetch
         async function fetchWithRetry(url, options, maxRetries = 5) {
             for (let i = 0; i < maxRetries; i++) {
                 try {
                     const response = await fetch(url, options);
                     if (response.ok) return await response.json();
+                    
+                    // Specific handling for 403 Forbidden
+                    if (response.status === 403) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(`403 Forbidden: Your API key may be missing, invalid, or restricted. Please check your AI Settings. (Error: ${errorData.error?.message || 'Unauthorized'})`);
+                    }
+
                     if (response.status === 429 || response.status >= 500) {
                         const delay = Math.pow(2, i) * 1000;
                         await new Promise(resolve => setTimeout(resolve, delay));
@@ -301,7 +350,7 @@
                     }
                     throw new Error(`API error ${response.status}`);
                 } catch (err) {
-                    if (i === maxRetries - 1) throw err;
+                    if (i === maxRetries - 1 || err.message.includes("403")) throw err;
                     const delay = Math.pow(2, i) * 1000;
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
@@ -313,6 +362,12 @@
             const handle = handleInput.value.trim().replace('@', '');
             if (!handle) return;
 
+            if (!apiKey) {
+                alert("Please click the gear icon to set your Gemini API Key first!");
+                toggleSettings();
+                return;
+            }
+
             placeholder.classList.add('hidden');
             resultContainer.classList.add('hidden');
             loading.classList.remove('hidden');
@@ -323,7 +378,7 @@
                 await startAiTransformation(base64Image);
             } catch (err) {
                 console.error("AI Dittofier Error:", err);
-                alert(err.message || "Failed to scan DNA. Your network might be blocking our scanners.");
+                alert(err.message || "Failed to scan DNA.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
@@ -332,6 +387,11 @@
         async function handleManualUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
+            if (!apiKey) {
+                alert("Please click the gear icon to set your Gemini API Key first!");
+                toggleSettings();
+                return;
+            }
 
             placeholder.classList.add('hidden');
             resultContainer.classList.add('hidden');
@@ -376,11 +436,11 @@
                     resultContainer.classList.remove('hidden');
                     resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
-                    throw new Error("Neural DNA synthesis failed.");
+                    throw new Error("Neural DNA synthesis failed. The AI transformation returned no image.");
                 }
             } catch (err) {
                 console.error("AI Error:", err);
-                alert("The AI neural link dropped! Please try again.");
+                alert(err.message || "The AI neural link dropped! Please try again.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
