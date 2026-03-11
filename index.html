@@ -251,9 +251,14 @@
         const resultContainer = document.getElementById('result-container');
         const resultImage = document.getElementById('result-image');
 
-        // Helper to convert URL to Base64
+        // Helper to convert URL to Base64 with CORS Proxy
         async function getBase64FromUrl(url) {
-            const response = await fetch(url);
+            // Using weserv.nl as a highly reliable image proxy to bypass CORS restrictions
+            const proxiedUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+            
+            const response = await fetch(proxiedUrl);
+            if (!response.ok) throw new Error("Could not fetch DNA profile through secure proxy.");
+            
             const blob = await response.blob();
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -295,7 +300,7 @@
             loading.classList.remove('hidden');
 
             try {
-                // 1. Fetch Profile Picture DNA
+                // 1. Fetch Profile Picture DNA via CORS-friendly Proxy
                 const pfpUrl = `https://unavatar.io/twitter/${handle}?fallback=https://i.ibb.co/Y4S4BP97/Screenshot-2.png`;
                 const base64Image = await getBase64FromUrl(pfpUrl);
 
@@ -336,7 +341,7 @@
 
             } catch (err) {
                 console.error("AI Dittofier Error:", err);
-                alert("The transformation was interrupted! Please try again in a moment.");
+                alert("The transformation was interrupted! " + err.message);
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
