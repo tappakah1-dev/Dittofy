@@ -167,6 +167,14 @@
                             AI TRANSFORM
                         </button>
                     </div>
+                    <!-- Fail-safe upload option if network is strict -->
+                    <div class="mt-4">
+                        <input type="file" id="manual-upload" class="hidden" accept="image/*" onchange="handleManualUpload(event)">
+                        <button onclick="document.getElementById('manual-upload').click()" class="text-zinc-500 hover:text-pink-400 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                            Or Upload DNA Manually
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex flex-col items-center">
@@ -251,34 +259,33 @@
         const resultContainer = document.getElementById('result-container');
         const resultImage = document.getElementById('result-image');
 
-        // Robust image fetcher with CORS bypass
+        // Multi-proxy fallback image fetcher
         async function getBase64FromUrl(url) {
-            // Using corsproxy.io for highly reliable CORS bypass
-            const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+            // List of proxies to try in sequence if one is blocked/invalid cert
+            const proxies = [
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+            ];
             
-            try {
-                const response = await fetch(proxiedUrl);
-                if (!response.ok) throw new Error("Network DNA fetch failed.");
-                
-                const blob = await response.blob();
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            } catch (e) {
-                // Return default logo DNA if proxy fails
-                console.warn("Primary fetch failed, using fallback DNA.");
-                const fallbackResponse = await fetch(`https://corsproxy.io/?${encodeURIComponent('https://i.ibb.co/Y4S4BP97/Screenshot-2.png')}`);
-                const blob = await fallbackResponse.blob();
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
+            for (const proxiedUrl of proxies) {
+                try {
+                    const response = await fetch(proxiedUrl);
+                    if (!response.ok) continue;
+                    
+                    const blob = await response.blob();
+                    return await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    console.warn(`Proxy ${proxiedUrl} failed, trying next...`, e);
+                }
             }
+
+            // If all proxies fail, throw error
+            throw new Error("Security policy blocked all DNA fetch attempts. Please use manual upload!");
         }
 
         // Exponential Backoff Fetch
@@ -311,11 +318,35 @@
             loading.classList.remove('hidden');
 
             try {
-                // 1. Fetch DNA (Twitter PFP)
                 const pfpUrl = `https://unavatar.io/twitter/${handle}`;
                 const base64Image = await getBase64FromUrl(pfpUrl);
+                await startAiTransformation(base64Image);
+            } catch (err) {
+                console.error("AI Dittofier Error:", err);
+                alert(err.message || "Failed to scan DNA. Your network might be blocking our scanners.");
+                loading.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+        }
 
-                // 2. Transformation Prompt
+        async function handleManualUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            placeholder.classList.add('hidden');
+            resultContainer.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64 = e.target.result.split(',')[1];
+                await startAiTransformation(base64);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function startAiTransformation(base64Image) {
+            try {
                 const prompt = "High-fidelity AI Transformation: Transform the subject in this image into a single, vibrant pink, amorphous blob that mimics the 'Ditto' Pokemon aesthetic. Keep the subject's iconic silhouette, hair, or signature accessories (like glasses) but render the entire form in a glossy, soft pink texture. Replace the face with the signature Ditto face: two simple black dot eyes and a thin, horizontal, slightly curved black line for a mouth. Background should be a clean cinematic studio lighting setup with soft pink highlights.";
 
                 const payload = {
@@ -330,7 +361,6 @@
                     }
                 };
 
-                // 3. Request Image Transformation
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
                 const result = await fetchWithRetry(url, {
                     method: 'POST',
@@ -348,10 +378,9 @@
                 } else {
                     throw new Error("Neural DNA synthesis failed.");
                 }
-
             } catch (err) {
-                console.error("AI Dittofier Error:", err);
-                alert("The transformation was interrupted! Please try again in a moment.");
+                console.error("AI Error:", err);
+                alert("The AI neural link dropped! Please try again.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
