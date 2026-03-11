@@ -46,7 +46,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        canvas {
+        .result-image {
             max-width: 100%;
             height: auto;
             border-radius: 24px;
@@ -149,8 +149,8 @@
     <section id="generator" class="py-24 relative">
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <div class="mb-16">
-                <h2 class="font-brand text-5xl text-white mb-6 uppercase tracking-tight">The Dittofier <span class="text-pink-500">2.0</span></h2>
-                <p class="text-lg text-zinc-400 max-w-xl mx-auto">Fetch DNA from any X profile to initiate the merge. The world is better in pink.</p>
+                <h2 class="font-brand text-5xl text-white mb-6 uppercase tracking-tight">The Dittofier <span class="text-pink-500 tracking-widest">IMAGEN</span></h2>
+                <p class="text-lg text-zinc-400 max-w-xl mx-auto">High-fidelity AI transformation. Fetch DNA from any X profile to initiate the neural merge into a $DITTOFY blob.</p>
             </div>
 
             <div class="glass p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/40">
@@ -164,7 +164,7 @@
                         </div>
                         <button onclick="dittofyHandle()" class="cyber-gradient text-white px-10 py-5 rounded-2xl font-brand text-xl hover:scale-105 transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 20v2"/></svg>
-                            DITTOFY
+                            AI TRANSFORM
                         </button>
                     </div>
                 </div>
@@ -174,16 +174,17 @@
                         <div class="w-24 h-24 bg-zinc-950 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5 group-hover:border-purple-500/30 transition-all duration-500">
                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 text-zinc-700 group-hover:text-purple-500 transition-colors"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>
                         </div>
-                        <p class="text-zinc-500 font-medium">Awaiting DNA Scan...</p>
+                        <p class="text-zinc-500 font-medium">Awaiting Neural DNA Scan...</p>
                     </div>
 
                     <div id="loading" class="hidden py-20 text-center">
                         <div class="w-16 h-16 border-4 border-zinc-800 border-t-purple-500 rounded-full loader mx-auto mb-8"></div>
-                        <p class="text-purple-400 font-brand text-xl animate-pulse uppercase tracking-widest">Absorbing DNA...</p>
+                        <p class="text-purple-400 font-brand text-xl animate-pulse uppercase tracking-widest">Processing with Imagen...</p>
+                        <p class="text-zinc-500 text-xs mt-2">Morphing pixels into pink perfection...</p>
                     </div>
 
-                    <div id="canvas-container" class="hidden w-full max-w-[500px] flex flex-col items-center">
-                        <canvas id="meme-canvas" class="w-full mb-8"></canvas>
+                    <div id="result-container" class="hidden w-full max-w-[500px] flex flex-col items-center">
+                        <img id="result-image" class="result-image w-full mb-8" alt="Dittofy AI Transformation">
                         <button onclick="downloadMeme()" class="w-full bg-white text-black py-5 rounded-2xl font-bold hover:bg-zinc-200 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                             SAVE TRANSFORMATION
@@ -229,6 +230,9 @@
     </div>
 
     <script>
+        // API Key initialized as per instructions. Execution environment handles the key.
+        const apiKey = "";
+
         function copyCA() {
             const ca = document.getElementById('ca-text').innerText;
             const el = document.createElement('textarea');
@@ -242,94 +246,108 @@
             setTimeout(() => { toast.style.opacity = '0'; }, 2000);
         }
 
-        const canvas = document.getElementById('meme-canvas');
-        const ctx = canvas.getContext('2d');
         const placeholder = document.getElementById('placeholder');
         const loading = document.getElementById('loading');
-        const canvasContainer = document.getElementById('canvas-container');
+        const resultContainer = document.getElementById('result-container');
+        const resultImage = document.getElementById('result-image');
+
+        // Helper to convert URL to Base64
+        async function getBase64FromUrl(url) {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64String = reader.result.split(',')[1];
+                    resolve(base64String);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // Exponential Backoff Fetch for API stability
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return await response.json();
+                    if (response.status === 429 || response.status >= 500) {
+                        const delay = Math.pow(2, i) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    throw new Error(`API error ${response.status}`);
+                } catch (err) {
+                    if (i === maxRetries - 1) throw err;
+                    const delay = Math.pow(2, i) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
 
         async function dittofyHandle() {
             const handle = document.getElementById('twitter-handle').value.trim().replace('@', '');
             if (!handle) return;
 
             placeholder.classList.add('hidden');
-            canvasContainer.classList.add('hidden');
+            resultContainer.classList.add('hidden');
             loading.classList.remove('hidden');
 
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            // unavatar.io is an excellent proxy for X/Twitter profile pictures
-            img.src = `https://unavatar.io/twitter/${handle}?fallback=https://i.ibb.co/Y4S4BP97/Screenshot-2.png`;
+            try {
+                // 1. Fetch Profile Picture DNA
+                const pfpUrl = `https://unavatar.io/twitter/${handle}?fallback=https://i.ibb.co/Y4S4BP97/Screenshot-2.png`;
+                const base64Image = await getBase64FromUrl(pfpUrl);
 
-            img.onload = () => {
-                renderDittoMeme(img);
-                loading.classList.add('hidden');
-                canvasContainer.classList.remove('hidden');
-                canvasContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            };
+                // 2. Prepare high-fidelity transformation prompt
+                const prompt = "High-fidelity Dittofication: Transform the subject of this image into a single, vibrant pink, amorphous blob that mimics the 'Ditto' Pokemon aesthetic. Keep the subject's iconic silhouette or defining accessories (like specific hats or glasses) but render the entire form in a glossy, soft pink texture. Replace the eyes and mouth with the signature Ditto face: two simple black dot eyes and a thin, horizontal, slightly curved black line for a mouth. Background should be a clean cinematic studio lighting setup with soft pink glows.";
 
-            img.onerror = () => {
-                alert("Failed to fetch DNA from the X-verse. The handle may be incorrect or restricted.");
+                const payload = {
+                    contents: [{
+                        parts: [
+                            { text: prompt },
+                            { inlineData: { mimeType: "image/png", data: base64Image } }
+                        ]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["TEXT", "IMAGE"]
+                    }
+                };
+
+                // 3. Request Image Transformation (gemini-2.5-flash-image-preview handles editing)
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+                const result = await fetchWithRetry(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // 4. Render AI Transformation result
+                const generatedBase64 = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (generatedBase64) {
+                    resultImage.src = `data:image/png;base64,${generatedBase64}`;
+                    loading.classList.add('hidden');
+                    resultContainer.classList.remove('hidden');
+                    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error("Transformation failed to generate image.");
+                }
+
+            } catch (err) {
+                console.error("AI Dittofier Error:", err);
+                alert("The transformation was interrupted! Please try again in a moment.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
-            };
-        }
-
-        function renderDittoMeme(img) {
-            canvas.width = 800;
-            canvas.height = 800;
-
-            // Fill background
-            ctx.fillStyle = '#18181b';
-            ctx.fillRect(0, 0, 800, 800);
-            
-            // Draw image with cover behavior
-            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-            const x = (canvas.width / 2) - (img.width / 2) * scale;
-            const y = (canvas.height / 2) - (img.height / 2) * scale;
-            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-
-            // Apply Pink/Purple Overlay
-            ctx.fillStyle = 'rgba(168, 85, 247, 0.45)'; 
-            ctx.fillRect(0, 0, 800, 800);
-
-            // Draw Ditto Face
-            const cx = 400;
-            const cy = 400;
-            const eyeGap = 120;
-            const eyeRad = 15;
-
-            ctx.fillStyle = '#000000';
-            
-            // Eyes
-            ctx.beginPath(); ctx.arc(cx - eyeGap/2, cy - 30, eyeRad, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(cx + eyeGap/2, cy - 30, eyeRad, 0, Math.PI * 2); ctx.fill();
-
-            // Mouth
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 10;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(cx - 70, cy + 40);
-            ctx.quadraticCurveTo(cx, cy + 55, cx + 70, cy + 40);
-            ctx.stroke();
-
-            // Branding
-            ctx.font = '700 36px Space Grotesk';
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'right';
-            ctx.fillText('$DITTOFY', 760, 760);
+            }
         }
 
         function downloadMeme() {
-            try {
-                const link = document.createElement('a');
-                link.download = `dittofy-transformation.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch (e) {
-                alert("Please right-click the image and select 'Save Image As'.");
-            }
+            if (!resultImage.src) return;
+            const link = document.createElement('a');
+            link.download = `dittofy-transformation.png`;
+            link.href = resultImage.src;
+            link.click();
         }
 
         // Enter key support
