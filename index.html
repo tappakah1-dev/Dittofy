@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dittofy | $DITTOFY - The Void is Pink</title>
+    <!-- External Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide:0.263.0/lucide.min.js"></script>
+    
     <style>
         :root {
             --neon-purple: #a855f7;
@@ -18,6 +19,7 @@
             background-color: var(--dark-bg);
             color: #f4f4f5;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         .font-brand { font-family: 'Fredoka One', cursive; }
         
@@ -25,11 +27,6 @@
             background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
         }
         
-        .neon-border {
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-            border: 1px solid rgba(168, 85, 247, 0.5);
-        }
-
         .neon-text-purple {
             text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
         }
@@ -54,6 +51,7 @@
             height: auto;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(236, 72, 153, 0.2);
+            background: #18181b;
         }
 
         .btn-cyber {
@@ -66,10 +64,14 @@
             box-shadow: 0 0 20px rgba(236, 72, 153, 0.6);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .loader {
+            border-top-color: #a855f7;
+            animation: spinner 0.6s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="selection:bg-purple-500 selection:text-white">
@@ -79,7 +81,7 @@
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="https://i.ibb.co/Y4S4BP97/Screenshot-2.png" alt="Logo" class="w-12 h-12 rounded-full border border-purple-500/50">
-                <span class="font-brand text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">DITTOFY</span>
+                <span class="font-brand text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight uppercase">DITTOFY</span>
             </div>
             <div class="hidden md:flex items-center gap-10 font-bold text-zinc-400">
                 <a href="#about" class="hover:text-white transition-colors">Origins</a>
@@ -92,14 +94,13 @@
         </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <section class="pt-40 pb-20 px-6 relative">
-        <!-- Background elements -->
-        <div class="absolute top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-600/10 blur-[120px] rounded-full -z-10"></div>
+        <div class="absolute top-40 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[400px] bg-purple-600/10 blur-[120px] rounded-full -z-10"></div>
         
         <div class="max-w-6xl mx-auto flex flex-col items-center text-center">
-            <div class="relative w-full max-w-5xl aspect-[21/9] md:aspect-[3/1] rounded-[2rem] overflow-hidden mb-16 shadow-2xl border border-white/10 group">
-                <img src="https://pbs.twimg.com/community_banner_img/2031610595431358464/Hjz7xamL?format=jpg&name=small" alt="Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="relative w-full max-w-5xl aspect-[21/9] md:aspect-[3/1] rounded-[2rem] overflow-hidden mb-16 shadow-2xl border border-white/10 group bg-zinc-900">
+                <img src="https://pbs.twimg.com/community_banner_img/2031610595431358464/Hjz7xamL?format=jpg&name=small" alt="Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80">
                 <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent"></div>
             </div>
 
@@ -110,32 +111,23 @@
             
             <h1 class="font-brand text-6xl md:text-9xl mb-6 tracking-tighter neon-text-purple">Dittofy</h1>
             <p class="text-xl md:text-2xl font-medium text-zinc-400 mb-10 max-w-2xl leading-relaxed">
-                The galaxy is merging. Resistance is pink. 
-                <span class="text-white font-bold">$DITTOFY</span> is the ultimate evolution of the Solana meme.
+                The Solana galaxy is merging. Resistance is pink. 
+                <span class="text-white font-bold">$DITTOFY</span> is the ultimate evolution.
             </p>
 
-            <!-- CA Address -->
+            <!-- CA Address Box -->
             <div class="glass p-2 pl-6 rounded-2xl flex flex-col md:flex-row items-center gap-4 border border-white/10 w-full max-w-2xl">
                 <span class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Contract</span>
                 <code id="ca-text" class="text-purple-400 font-mono font-bold break-all text-sm md:text-base flex-1">3JDeQGDF8jxBKJWNqc8XWTiU8WWszwAtzZeHWFakpump</code>
-                <button onclick="copyCA()" class="bg-zinc-800 p-4 rounded-xl text-zinc-300 hover:bg-zinc-700 hover:text-white transition-all group" title="Copy CA">
-                    <i data-lucide="copy" class="w-5 h-5 group-active:scale-90 transition"></i>
+                <button onclick="copyCA()" class="bg-zinc-800 p-4 rounded-xl text-zinc-300 hover:bg-zinc-700 hover:text-white transition-all group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-active:scale-90 transition"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                 </button>
-            </div>
-            
-            <div class="flex flex-wrap justify-center gap-6 mt-12">
-                <a href="https://axiom.trade/@dumacuk" target="_blank" class="bg-white text-black px-10 py-5 rounded-2xl font-brand text-xl btn-cyber flex items-center gap-3">
-                    <i data-lucide="zap" class="fill-current"></i> BUY ON AXIOM
-                </a>
-                <a href="#generator" class="glass text-white px-10 py-5 rounded-2xl font-brand text-xl btn-cyber flex items-center gap-3 hover:bg-white/10">
-                    <i data-lucide="wand-2"></i> DITTOFY ME
-                </a>
             </div>
         </div>
     </section>
 
-    <!-- About -->
-    <section id="about" class="py-32 bg-zinc-950 relative">
+    <!-- Origins -->
+    <section id="about" class="py-24 bg-zinc-950 border-y border-white/5">
         <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
             <div class="order-2 md:order-1">
                 <div class="inline-block px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-bold mb-6 tracking-widest uppercase">
@@ -143,73 +135,59 @@
                 </div>
                 <h2 class="font-brand text-5xl text-white mb-8">One Blob to <br><span class="text-purple-500">Rule Them All</span></h2>
                 <div class="space-y-6 text-lg text-zinc-400">
-                    <p>In a world of complex charts and rug pulls, Dittofy brings the comfort of simplicity. We don't need fancy utilities when we have the perfect form.</p>
-                    <p>The <span class="text-white font-bold">$DITTOFY</span> virus is spreading through the Solana ecosystem, turning every high-stress trader into a chill, smiling blob. Join the collective. Become the blob.</p>
-                </div>
-                <div class="flex gap-8 mt-12">
-                    <div>
-                        <div class="text-3xl font-brand text-white">0%</div>
-                        <div class="text-sm text-zinc-500 uppercase tracking-tighter">Taxation</div>
-                    </div>
-                    <div class="w-px h-12 bg-zinc-800"></div>
-                    <div>
-                        <div class="text-3xl font-brand text-white">100%</div>
-                        <div class="text-sm text-zinc-500 uppercase tracking-tighter">Community</div>
-                    </div>
+                    <p>In an era of complex DeFi and stressful charts, Dittofy offers the path of least resistance. The infection is spreading through Solana, turning every high-stress trader into a chill, smiling blob.</p>
+                    <p>We are absorbing everything. We are everyone. We are DITTOFY.</p>
                 </div>
             </div>
-            <div class="order-1 md:order-2 relative group">
-                <div class="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                <img src="https://i.ibb.co/Y4S4BP97/Screenshot-2.png" alt="About" class="relative z-10 w-full rounded-[2.5rem] border border-white/10 shadow-3xl">
+            <div class="order-1 md:order-2">
+                <img src="https://i.ibb.co/Y4S4BP97/Screenshot-2.png" alt="About" class="w-full rounded-[2.5rem] border border-white/10 shadow-3xl grayscale hover:grayscale-0 transition duration-700">
             </div>
         </div>
     </section>
 
-    <!-- Generator -->
-    <section id="generator" class="py-32 relative">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
-        
-        <div class="max-w-5xl mx-auto px-6 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="font-brand text-6xl text-white mb-6">The Dittofier <span class="text-pink-500">2.0</span></h2>
-                <p class="text-xl text-zinc-400">Scan the X-verse and transform any profile into a Ditto.</p>
+    <!-- Meme Generator Section -->
+    <section id="generator" class="py-24 relative">
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <div class="mb-16">
+                <h2 class="font-brand text-5xl text-white mb-6 uppercase tracking-tight">The Dittofier <span class="text-pink-500">2.0</span></h2>
+                <p class="text-lg text-zinc-400 max-w-xl mx-auto">Fetch DNA from any X profile to initiate the merge. The world is better in pink.</p>
             </div>
 
-            <div class="glass p-10 md:p-16 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden">
-                <!-- Decorative Glow -->
+            <div class="glass p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/40">
                 <div class="absolute -top-20 -right-20 w-64 h-64 bg-pink-500/10 blur-[80px]"></div>
                 
-                <div class="flex flex-col md:flex-row gap-5 mb-12 relative z-10">
-                    <div class="flex-1 relative group">
-                        <div class="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-400 transition-colors">@</div>
-                        <input type="text" id="twitter-handle" placeholder="TwitterHandle" class="w-full bg-zinc-900/50 border-2 border-zinc-800 rounded-2xl py-5 pl-12 pr-6 text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 transition-all text-lg font-medium">
+                <div class="max-w-xl mx-auto mb-12">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="relative flex-1 group">
+                            <span class="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-500 font-bold group-focus-within:text-purple-400 transition-colors">@</span>
+                            <input type="text" id="twitter-handle" placeholder="elonmusk" class="w-full bg-zinc-950 border-2 border-zinc-800 rounded-2xl py-5 pl-12 pr-6 text-white focus:outline-none focus:border-purple-500/50 transition-all text-lg font-medium">
+                        </div>
+                        <button onclick="dittofyHandle()" class="cyber-gradient text-white px-10 py-5 rounded-2xl font-brand text-xl hover:scale-105 transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 20v2"/></svg>
+                            DITTOFY
+                        </button>
                     </div>
-                    <button onclick="dittofyHandle()" class="cyber-gradient text-white px-10 py-5 rounded-2xl font-brand text-xl hover:scale-[1.02] transition active:scale-95 shadow-lg">
-                        GENERATE
-                    </button>
                 </div>
 
                 <div class="flex flex-col items-center">
-                    <div id="canvas-container" class="hidden flex flex-col items-center w-full">
-                        <canvas id="meme-canvas" width="500" height="500" class="mb-10"></canvas>
-                        <button onclick="downloadMeme()" class="flex items-center gap-3 bg-zinc-100 text-black px-10 py-4 rounded-2xl font-bold hover:bg-white transition-all transform hover:-translate-y-1">
-                            <i data-lucide="download" class="w-5 h-5"></i> Save Transformation
-                        </button>
-                    </div>
-                    
-                    <div id="placeholder" class="py-24 text-center group">
-                        <div class="w-24 h-24 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5 group-hover:border-purple-500/30 transition-all duration-500">
-                            <i data-lucide="ghost" class="w-12 h-12 text-zinc-700 group-hover:text-purple-500 transition-colors"></i>
+                    <div id="placeholder" class="py-20 text-center group">
+                        <div class="w-24 h-24 bg-zinc-950 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5 group-hover:border-purple-500/30 transition-all duration-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 text-zinc-700 group-hover:text-purple-500 transition-colors"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>
                         </div>
-                        <p class="text-zinc-500 font-medium">Awaiting input from the X-verse...</p>
+                        <p class="text-zinc-500 font-medium">Awaiting DNA Scan...</p>
                     </div>
 
-                    <div id="loading" class="hidden py-24 text-center">
-                        <div class="relative w-16 h-16 mx-auto mb-8">
-                            <div class="absolute inset-0 border-4 border-purple-500/20 rounded-full"></div>
-                            <div class="absolute inset-0 border-4 border-t-purple-500 rounded-full animate-spin"></div>
-                        </div>
-                        <p class="text-purple-400 font-brand text-xl animate-pulse">Analyzing DNA...</p>
+                    <div id="loading" class="hidden py-20 text-center">
+                        <div class="w-16 h-16 border-4 border-zinc-800 border-t-purple-500 rounded-full loader mx-auto mb-8"></div>
+                        <p class="text-purple-400 font-brand text-xl animate-pulse uppercase tracking-widest">Absorbing DNA...</p>
+                    </div>
+
+                    <div id="canvas-container" class="hidden w-full max-w-[500px] flex flex-col items-center">
+                        <canvas id="meme-canvas" class="w-full mb-8"></canvas>
+                        <button onclick="downloadMeme()" class="w-full bg-white text-black py-5 rounded-2xl font-bold hover:bg-zinc-200 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                            SAVE TRANSFORMATION
+                        </button>
                     </div>
                 </div>
             </div>
@@ -217,60 +195,40 @@
     </section>
 
     <!-- Tokenomics -->
-    <section id="tokenomics" class="py-32 bg-zinc-950">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass p-12 rounded-[2.5rem] hover:border-purple-500/50 transition-all group">
-                    <i data-lucide="bar-chart-3" class="w-10 h-10 text-purple-500 mb-8 group-hover:scale-110 transition"></i>
-                    <h3 class="text-4xl font-brand text-white mb-2">1,000,000,000</h3>
-                    <p class="text-zinc-500 font-bold uppercase tracking-widest text-sm">Total $DITTOFY Supply</p>
-                </div>
-                <div class="glass p-12 rounded-[2.5rem] hover:border-pink-500/50 transition-all group">
-                    <i data-lucide="lock" class="w-10 h-10 text-pink-500 mb-8 group-hover:scale-110 transition"></i>
-                    <h3 class="text-4xl font-brand text-white mb-2">100% Locked</h3>
-                    <p class="text-zinc-500 font-bold uppercase tracking-widest text-sm">LP Burnt Forever</p>
-                </div>
-                <div class="glass p-12 rounded-[2.5rem] hover:border-purple-400/50 transition-all group">
-                    <i data-lucide="shield-check" class="w-10 h-10 text-purple-400 mb-8 group-hover:scale-110 transition"></i>
-                    <h3 class="text-4xl font-brand text-white mb-2">Zero Tax</h3>
-                    <p class="text-zinc-500 font-bold uppercase tracking-widest text-sm">0/0 Buy & Sell</p>
-                </div>
+    <section id="tokenomics" class="py-24 bg-zinc-950">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+            <div class="glass p-12 rounded-[2.5rem] bg-zinc-900/20 border border-white/5 text-center">
+                <h3 class="text-4xl font-brand text-white mb-2">1 Billion</h3>
+                <p class="text-zinc-500 font-bold uppercase tracking-widest text-xs">Total Tokens</p>
+            </div>
+            <div class="glass p-12 rounded-[2.5rem] bg-zinc-900/20 border border-white/5 text-center">
+                <h3 class="text-4xl font-brand text-white mb-2">LP Burnt</h3>
+                <p class="text-zinc-500 font-bold uppercase tracking-widest text-xs">Forever Secure</p>
+            </div>
+            <div class="glass p-12 rounded-[2.5rem] bg-zinc-900/20 border border-white/5 text-center">
+                <h3 class="text-4xl font-brand text-white mb-2">Zero Tax</h3>
+                <p class="text-zinc-500 font-bold uppercase tracking-widest text-xs">Buy/Sell Tax</p>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-20 border-t border-white/5 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
-            <div class="flex flex-col items-center mb-12">
-                <img src="https://i.ibb.co/Y4S4BP97/Screenshot-2.png" alt="Logo" class="w-20 h-20 rounded-full mb-6 filter drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-                <h2 class="font-brand text-3xl text-white">DITTOFY</h2>
-            </div>
-            
-            <div class="flex justify-center gap-6 mb-12">
-                <a href="#" class="w-14 h-14 glass flex items-center justify-center rounded-2xl hover:bg-white hover:text-black transition-all">
-                    <i data-lucide="twitter"></i>
-                </a>
-                <a href="#" class="w-14 h-14 glass flex items-center justify-center rounded-2xl hover:bg-white hover:text-black transition-all">
-                    <i data-lucide="send"></i>
-                </a>
-            </div>
-            
-            <p class="text-zinc-600 text-sm max-w-xl mx-auto leading-relaxed uppercase tracking-tighter">
-                Dittofy is a decentralized social experiment. No intrinsic value. No financial promises. 
-                Just blobs. Lots and lots of blobs.
-            </p>
+    <footer class="py-20 border-t border-white/5 bg-zinc-950 text-center">
+        <div class="flex flex-col items-center mb-8">
+            <img src="https://i.ibb.co/Y4S4BP97/Screenshot-2.png" alt="Logo" class="w-16 h-16 rounded-full mb-6 filter drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+            <h2 class="font-brand text-2xl text-white tracking-widest uppercase">DITTOFY</h2>
         </div>
+        <p class="text-zinc-600 text-[10px] uppercase tracking-tighter">
+            $DITTOFY — The universe is merging. Resistance is pink.
+        </p>
     </footer>
 
     <!-- Toast -->
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass text-white px-8 py-4 rounded-2xl opacity-0 pointer-events-none transition-all duration-300 z-[100] font-bold border-purple-500/50 shadow-2xl">
-        Copied to clipboard! 🐙
+        <span>Copied to Clipboard! 🐙</span>
     </div>
 
     <script>
-        lucide.createIcons();
-
         function copyCA() {
             const ca = document.getElementById('ca-text').innerText;
             const el = document.createElement('textarea');
@@ -279,14 +237,9 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-
             const toast = document.getElementById('toast');
-            toast.classList.remove('opacity-0', 'translate-y-4');
-            toast.classList.add('opacity-100', '-translate-y-0');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-4');
-                toast.classList.remove('opacity-100', '-translate-y-0');
-            }, 3000);
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
         }
 
         const canvas = document.getElementById('meme-canvas');
@@ -303,97 +256,83 @@
             canvasContainer.classList.add('hidden');
             loading.classList.remove('hidden');
 
-            try {
-                // Fetching PFP from Unavatar
-                const pfpUrl = `https://unavatar.io/twitter/${handle}`;
-                
-                const img = new Image();
-                img.crossOrigin = "anonymous";
-                img.src = pfpUrl;
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            // unavatar.io is an excellent proxy for X/Twitter profile pictures
+            img.src = `https://unavatar.io/twitter/${handle}?fallback=https://i.ibb.co/Y4S4BP97/Screenshot-2.png`;
 
-                img.onload = () => {
-                    renderDittoMeme(img);
-                    loading.classList.add('hidden');
-                    canvasContainer.classList.remove('hidden');
-                    canvasContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                };
+            img.onload = () => {
+                renderDittoMeme(img);
+                loading.classList.add('hidden');
+                canvasContainer.classList.remove('hidden');
+                canvasContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
 
-                img.onerror = () => {
-                    alert("Could not fetch X profile picture. The user might be private or doesn't exist.");
-                    loading.classList.add('hidden');
-                    placeholder.classList.remove('hidden');
-                };
-
-            } catch (err) {
-                console.error(err);
+            img.onerror = () => {
+                alert("Failed to fetch DNA from the X-verse. The handle may be incorrect or restricted.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
-            }
+            };
         }
 
         function renderDittoMeme(img) {
-            canvas.width = 600;
-            canvas.height = 600;
+            canvas.width = 800;
+            canvas.height = 800;
 
-            // Draw Background Image
-            ctx.drawImage(img, 0, 0, 600, 600);
+            // Fill background
+            ctx.fillStyle = '#18181b';
+            ctx.fillRect(0, 0, 800, 800);
+            
+            // Draw image with cover behavior
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const x = (canvas.width / 2) - (img.width / 2) * scale;
+            const y = (canvas.height / 2) - (img.height / 2) * scale;
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
 
-            // Apply Dark Purple Cyber Overlay
-            ctx.fillStyle = 'rgba(124, 58, 237, 0.45)'; 
-            ctx.fillRect(0, 0, 600, 600);
+            // Apply Pink/Purple Overlay
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.45)'; 
+            ctx.fillRect(0, 0, 800, 800);
 
-            // Add Grainy texture for dark mode feel
-            for (let i = 0; i < 1000; i++) {
-                const x = Math.random() * 600;
-                const y = Math.random() * 600;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-                ctx.fillRect(x, y, 1, 1);
-            }
+            // Draw Ditto Face
+            const cx = 400;
+            const cy = 400;
+            const eyeGap = 120;
+            const eyeRad = 15;
 
-            const centerX = 300;
-            const centerY = 300;
-            const eyeSpacing = 100;
-            const eyeSize = 12;
-
-            // Draw Ditto Face (Pure Black for Contrast)
             ctx.fillStyle = '#000000';
             
-            // Left Eye
-            ctx.beginPath();
-            ctx.arc(centerX - eyeSpacing/2, centerY - 15, eyeSize, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Right Eye
-            ctx.beginPath();
-            ctx.arc(centerX + eyeSpacing/2, centerY - 15, eyeSize, 0, Math.PI * 2);
-            ctx.fill();
+            // Eyes
+            ctx.beginPath(); ctx.arc(cx - eyeGap/2, cy - 30, eyeRad, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx + eyeGap/2, cy - 30, eyeRad, 0, Math.PI * 2); ctx.fill();
 
             // Mouth
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 10;
             ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.moveTo(centerX - 50, centerY + 30);
-            ctx.quadraticCurveTo(centerX, centerY + 38, centerX + 50, centerY + 30);
+            ctx.moveTo(cx - 70, cy + 40);
+            ctx.quadraticCurveTo(cx, cy + 55, cx + 70, cy + 40);
             ctx.stroke();
 
-            // $DITTOFY Logo/Text Overlay
-            ctx.font = 'bold 32px Space Grotesk';
+            // Branding
+            ctx.font = '700 36px Space Grotesk';
             ctx.fillStyle = 'white';
             ctx.textAlign = 'right';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.fillText('$DITTOFY', 570, 570);
-            ctx.shadowBlur = 0;
+            ctx.fillText('$DITTOFY', 760, 760);
         }
 
         function downloadMeme() {
-            const link = document.createElement('a');
-            link.download = `dittofy-${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            try {
+                const link = document.createElement('a');
+                link.download = `dittofy-transformation.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (e) {
+                alert("Please right-click the image and select 'Save Image As'.");
+            }
         }
 
+        // Enter key support
         document.getElementById('twitter-handle').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') dittofyHandle();
         });
