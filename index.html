@@ -251,27 +251,37 @@
         const resultContainer = document.getElementById('result-container');
         const resultImage = document.getElementById('result-image');
 
-        // Helper to convert URL to Base64 with CORS Proxy
+        // Robust image fetcher with CORS bypass
         async function getBase64FromUrl(url) {
-            // Using weserv.nl as a highly reliable image proxy to bypass CORS restrictions
-            const proxiedUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+            // Using corsproxy.io for highly reliable CORS bypass
+            const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
             
-            const response = await fetch(proxiedUrl);
-            if (!response.ok) throw new Error("Could not fetch DNA profile through secure proxy.");
-            
-            const blob = await response.blob();
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64String = reader.result.split(',')[1];
-                    resolve(base64String);
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
+            try {
+                const response = await fetch(proxiedUrl);
+                if (!response.ok) throw new Error("Network DNA fetch failed.");
+                
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                // Return default logo DNA if proxy fails
+                console.warn("Primary fetch failed, using fallback DNA.");
+                const fallbackResponse = await fetch(`https://corsproxy.io/?${encodeURIComponent('https://i.ibb.co/Y4S4BP97/Screenshot-2.png')}`);
+                const blob = await fallbackResponse.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
         }
 
-        // Exponential Backoff Fetch for API stability
+        // Exponential Backoff Fetch
         async function fetchWithRetry(url, options, maxRetries = 5) {
             for (let i = 0; i < maxRetries; i++) {
                 try {
@@ -292,7 +302,8 @@
         }
 
         async function dittofyHandle() {
-            const handle = document.getElementById('twitter-handle').value.trim().replace('@', '');
+            const handleInput = document.getElementById('twitter-handle');
+            const handle = handleInput.value.trim().replace('@', '');
             if (!handle) return;
 
             placeholder.classList.add('hidden');
@@ -300,12 +311,12 @@
             loading.classList.remove('hidden');
 
             try {
-                // 1. Fetch Profile Picture DNA via CORS-friendly Proxy
-                const pfpUrl = `https://unavatar.io/twitter/${handle}?fallback=https://i.ibb.co/Y4S4BP97/Screenshot-2.png`;
+                // 1. Fetch DNA (Twitter PFP)
+                const pfpUrl = `https://unavatar.io/twitter/${handle}`;
                 const base64Image = await getBase64FromUrl(pfpUrl);
 
-                // 2. Prepare high-fidelity transformation prompt
-                const prompt = "High-fidelity Dittofication: Transform the subject of this image into a single, vibrant pink, amorphous blob that mimics the 'Ditto' Pokemon aesthetic. Keep the subject's iconic silhouette or defining accessories (like specific hats or glasses) but render the entire form in a glossy, soft pink texture. Replace the eyes and mouth with the signature Ditto face: two simple black dot eyes and a thin, horizontal, slightly curved black line for a mouth. Background should be a clean cinematic studio lighting setup with soft pink glows.";
+                // 2. Transformation Prompt
+                const prompt = "High-fidelity AI Transformation: Transform the subject in this image into a single, vibrant pink, amorphous blob that mimics the 'Ditto' Pokemon aesthetic. Keep the subject's iconic silhouette, hair, or signature accessories (like glasses) but render the entire form in a glossy, soft pink texture. Replace the face with the signature Ditto face: two simple black dot eyes and a thin, horizontal, slightly curved black line for a mouth. Background should be a clean cinematic studio lighting setup with soft pink highlights.";
 
                 const payload = {
                     contents: [{
@@ -319,7 +330,7 @@
                     }
                 };
 
-                // 3. Request Image Transformation (gemini-2.5-flash-image-preview handles editing)
+                // 3. Request Image Transformation
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
                 const result = await fetchWithRetry(url, {
                     method: 'POST',
@@ -327,7 +338,6 @@
                     body: JSON.stringify(payload)
                 });
 
-                // 4. Render AI Transformation result
                 const generatedBase64 = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
 
                 if (generatedBase64) {
@@ -336,12 +346,12 @@
                     resultContainer.classList.remove('hidden');
                     resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
-                    throw new Error("Transformation failed to generate image.");
+                    throw new Error("Neural DNA synthesis failed.");
                 }
 
             } catch (err) {
                 console.error("AI Dittofier Error:", err);
-                alert("The transformation was interrupted! " + err.message);
+                alert("The transformation was interrupted! Please try again in a moment.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
@@ -350,12 +360,11 @@
         function downloadMeme() {
             if (!resultImage.src) return;
             const link = document.createElement('a');
-            link.download = `dittofy-transformation.png`;
+            link.download = `dittofy-ai.png`;
             link.href = resultImage.src;
             link.click();
         }
 
-        // Enter key support
         document.getElementById('twitter-handle').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') dittofyHandle();
         });
