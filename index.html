@@ -128,31 +128,12 @@
         </div>
     </section>
 
-    <!-- Origins -->
-    <section id="about" class="py-24 bg-zinc-950 border-y border-white/5">
-        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
-            <div class="order-2 md:order-1">
-                <div class="inline-block px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-bold mb-6 tracking-widest uppercase">
-                    The Origin Story
-                </div>
-                <h2 class="font-brand text-5xl text-white mb-8">One Blob to <br><span class="text-purple-500">Rule Them All</span></h2>
-                <div class="space-y-6 text-lg text-zinc-400">
-                    <p>In an era of complex DeFi and stressful charts, Dittofy offers the path of least resistance. The infection is spreading through Solana, turning every high-stress trader into a chill, smiling blob.</p>
-                    <p>We are absorbing everything. We are everyone. We are DITTOFY.</p>
-                </div>
-            </div>
-            <div class="order-1 md:order-2">
-                <img src="https://i.ibb.co/Y4S4BP97/Screenshot-2.png" alt="About" class="w-full rounded-[2.5rem] border border-white/10 shadow-3xl grayscale hover:grayscale-0 transition duration-700">
-            </div>
-        </div>
-    </section>
-
     <!-- Meme Generator Section -->
     <section id="generator" class="py-24 relative">
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <div class="mb-16">
-                <h2 class="font-brand text-5xl text-white mb-6 uppercase tracking-tight">The Dittofier <span class="text-pink-500 tracking-widest">WATERFALL</span></h2>
-                <p class="text-lg text-zinc-400 max-w-xl mx-auto">Neural DNA transformation with multi-key load balancing. Fetch DNA from any X profile to initiate the neural merge.</p>
+                <h2 class="font-brand text-5xl text-white mb-6 uppercase tracking-tight">The Dittofier <span class="text-pink-500 tracking-widest uppercase">IMAGEN 3</span></h2>
+                <p class="text-lg text-zinc-400 max-w-xl mx-auto">Neural DNA transformation with work-network bypass. Fetch DNA from any X profile to initiate the neural merge.</p>
             </div>
 
             <div class="glass p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/40">
@@ -233,13 +214,13 @@
         </p>
     </footer>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass text-white px-8 py-4 rounded-2xl opacity-0 pointer-events-none transition-all duration-300 z-[100] font-bold border-purple-500/50 shadow-2xl">
-        <span>Copied to Clipboard! 🐙</span>
+    <!-- Success Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass text-white px-8 py-4 rounded-2xl opacity-0 pointer-events-none transition-all duration-300 z-[100] font-bold border-purple-500/50 shadow-2xl flex items-center gap-3">
+        <span>Copied to Clipboard!</span>
     </div>
 
     <script>
-        // API Key handles multi-key lists from environment
+        // API Key handles comma-separated list from environment
         const apiKey = "";
 
         function showToast(msg) {
@@ -266,12 +247,15 @@
         const resultContainer = document.getElementById('result-container');
         const resultImage = document.getElementById('result-image');
 
-        // Robust image fetcher with CORS bypass
+        // Robust multi-proxy fallback fetcher for work networks
         async function getBase64FromUrl(url) {
             const proxies = [
-                `https://corsproxy.io/?${encodeURIComponent(url)}`,
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-                `https://images.weserv.nl/?url=${encodeURIComponent(url)}`
+                // 1. Google Gadgets Proxy (Usually the best for bypassing work firewalls)
+                `https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=${encodeURIComponent(url)}`,
+                // 2. wsrv.nl (Modern resizer, often less suspicious than "proxy" domains)
+                `https://wsrv.nl/?url=${encodeURIComponent(url)}&output=png`,
+                // 3. allorigins (Standard fallback)
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
             ];
             
             for (const proxiedUrl of proxies) {
@@ -287,24 +271,26 @@
                         reader.readAsDataURL(blob);
                     });
                 } catch (e) {
-                    console.warn(`Fetch via ${proxiedUrl} failed: ${e.message}`);
+                    console.warn(`Proxy ${proxiedUrl} blocked or failed:`, e);
                 }
             }
-            throw new Error("DNA scan blocked by network security. Please use Manual Upload!");
+            throw new Error("DNA scan blocked by work network. Please use manual upload!");
         }
 
         // --- ROBUST WATERFALL API CALLER ---
         async function startAiTransformation(base64Image) {
+            // Split keys and shuffle to balance load
             const apiKeys = apiKey.split(',').map(k => k.trim()).filter(k => k);
             const shuffledKeys = apiKeys.sort(() => 0.5 - Math.random());
             
             // Waterfall through models
             const modelsToTry = [
-                "gemini-2.5-flash-image-preview",
-                "gemini-2.0-flash-exp" // Fallback example
+                "imagen-3.0-generate-001",
+                "imagen-3.0-generate-002",
+                "imagen-4.0-generate-001"
             ];
 
-            const prompt = "High-fidelity AI Transformation: Transform the subject in this image into a single, vibrant pink, amorphous blob that mimics the 'Ditto' Pokemon aesthetic. Keep the subject's iconic silhouette, hair, or signature accessories (like glasses) but render the entire form in a glossy, soft pink texture. Replace the face with the signature Ditto face: two simple black dot eyes and a thin, horizontal, slightly curved black line for a mouth. Background should be a clean cinematic studio lighting setup with soft pink highlights.";
+            const prompt = "A high-fidelity 3D render of a person transformed into a 'Ditto' Pokemon blob. The subject is a shiny, glossy pink amorphous blob with recognizable human features (like hair, glasses, or clothing) integrated into the soft jelly-like body. The face must be the iconic Ditto face: two simple black dot eyes and a thin, horizontal black line for a mouth. Background is a clean, dark cinematic studio environment with pink rim lighting.";
 
             let success = false;
             let lastError = null;
@@ -314,30 +300,23 @@
                 
                 for (const model of modelsToTry) {
                     try {
-                        loadingStatus.innerText = `Attempting merge via ${model}...`;
+                        loadingStatus.innerText = `Synthesizing via ${model}...`;
                         
-                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+                        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${key}`;
                         
-                        const response = await fetch(url, {
+                        const response = await fetch(endpoint, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                contents: [{
-                                    parts: [
-                                        { text: prompt },
-                                        { inlineData: { mimeType: "image/png", data: base64Image } }
-                                    ]
-                                }],
-                                generationConfig: {
-                                    responseModalities: ["TEXT", "IMAGE"]
-                                }
+                                instances: [{ prompt: prompt }],
+                                parameters: { sampleCount: 1 }
                             })
                         });
 
                         const data = await response.json();
 
                         if (response.ok) {
-                            const generatedBase64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                            const generatedBase64 = data.predictions?.[0]?.bytesBase64Encoded;
                             if (generatedBase64) {
                                 resultImage.src = `data:image/png;base64,${generatedBase64}`;
                                 loading.classList.add('hidden');
@@ -350,11 +329,11 @@
 
                         // Handle errors for retry logic
                         if (response.status === 429) {
-                            console.warn("Quota exceeded for key, trying next...");
-                            break; // Try next key
+                            console.warn("Quota exceeded for this key, trying next key...");
+                            break; // Move to next key
                         }
                         
-                        if (response.status === 404) {
+                        if (response.status === 404 || response.status === 403) {
                             continue; // Try next model in list
                         }
 
@@ -368,7 +347,7 @@
             }
 
             if (!success) {
-                alert(lastError || "Neural DNA synthesis failed on all available models/keys.");
+                alert(lastError || "Neural DNA synthesis failed. Your network might be blocking the AI connection.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
@@ -384,12 +363,13 @@
             loading.classList.remove('hidden');
 
             try {
+                // Fetch Profile Picture using Robust Bypass
                 const pfpUrl = `https://unavatar.io/twitter/${handle}`;
                 const base64Image = await getBase64FromUrl(pfpUrl);
                 await startAiTransformation(base64Image);
             } catch (err) {
-                console.error("AI Dittofier Error:", err);
-                alert(err.message || "Failed to scan DNA.");
+                console.error("DNA Fetch Error:", err);
+                alert(err.message || "Network blocked our scanners.");
                 loading.classList.add('hidden');
                 placeholder.classList.remove('hidden');
             }
@@ -414,7 +394,7 @@
         function downloadMeme() {
             if (!resultImage.src) return;
             const link = document.createElement('a');
-            link.download = `dittofy-ai.png`;
+            link.download = `dittofy-transformation.png`;
             link.href = resultImage.src;
             link.click();
         }
